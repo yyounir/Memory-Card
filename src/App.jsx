@@ -75,7 +75,7 @@ function App() {
       {/* <p>Hello React</p> */}
       <GameHeader score={3} moves={10} /> {/* add props here */}
       <div className="cards-grid">
-        {cardValues.map((card) => (
+        {cards.map((card) => (
           <Card card={card} onClick={handleCardClick}/>
         ))}
       </div>
