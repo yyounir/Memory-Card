@@ -23,6 +23,7 @@ const cardValues = [
 
 function App() { 
   const [cards, setCards] = useState([])
+  const [flippedCards, setFlippedCards] = useState([]);
 
   const initializeGame = () => {
     // SHUFFLE THE CARDS
@@ -67,6 +68,36 @@ function App() {
     });
 
     setCards(newCards);
+
+    const newFlippedCards = [...flippedCards, card.id]
+    setFlippedCards(newFlippedCards);
+
+    // Check for match if two cards are flipped
+
+    if(flippedCards.length === 1) {
+      const  firstCard = cards[flippedCards[0]]
+
+      if(firstCard.value === card.value) {
+        alert("Match")
+      }
+      else {
+        // Flip back card 1, card 2
+        setTimeout(() => {
+          const flippedBackCard = newCards.map((c) => {
+          if (newFlippedCards.includes(c.id) || c.id === card.id) {
+            return {...c, isFlipped: false}
+          }
+          else {
+            return c;
+          }
+        });
+
+        setCards(flippedBackCard);
+        setFlippedCards([]);
+        }, 1000)
+        
+      }
+    }
 
   };
   
