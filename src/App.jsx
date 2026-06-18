@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Card } from "./components/Card";
 import { GameHeader } from "./components/GameHeader";
+import { WinMessage } from "./components/WinMessage";
+import { useGameLogic } from "./hooks/useGameLagic";
 
 const cardValues = [
   "🍕",
@@ -22,92 +24,18 @@ const cardValues = [
 ]
 
 function App() { 
-  const [cards, setCards] = useState([])
-  const [flippedCards, setFlippedCards] = useState([]);
-
-  const initializeGame = () => {
-    // SHUFFLE THE CARDS
-    
-    // Loops the card values and sets the values
-    const finalCards = cardValues.map((value, index) => (
-      {
-        id: index,
-        value,
-        isFlipped: false,
-        isMatched: false,
-      }
-    ))
-
-    
-
-    // setCards state set to finalCards value which has the information given
-    setCards(finalCards)
-  };
-
-  
-
-  // Hooks / Callback Function
-  useEffect(() => {
-    initializeGame();
-  },[])
-
-  const handleCardClick = (card) => {
-    // Dont allow click, if the card is already clicked
-    if(card.isFlipped || card.isMatched) {
-      return;
-    }
-
-    // Update card-flipped state
-    const newCards = cards.map((c) => {
-      if(c.id === card.id) {
-        return {...c, isFlipped: true};
-      }
-      else{
-        return c;
-      }
-    });
-
-    setCards(newCards);
-
-    const newFlippedCards = [...flippedCards, card.id]
-    setFlippedCards(newFlippedCards);
-
-    // Check for match if two cards are flipped
-
-    if(flippedCards.length === 1) {
-      const  firstCard = cards[flippedCards[0]]
-
-      if(firstCard.value === card.value) {
-        alert("Match")
-      }
-      else {
-        // Flip back card 1, card 2
-        setTimeout(() => {
-          const flippedBackCard = newCards.map((c) => {
-          if (newFlippedCards.includes(c.id) || c.id === card.id) {
-            return {...c, isFlipped: false}
-          }
-          else {
-            return c;
-          }
-        });
-
-        setCards(flippedBackCard);
-        setFlippedCards([]);
-        }, 1000)
-        
-      }
-    }
-
-  };
+  const {cards, score, moves, handleCardClick, initializeGame, isGameComplete} = useGameLogic(cardValues);
   
   return (
     <div className="app">
       {/* <p>Hello React</p> */}
-      <GameHeader score={3} moves={10} /> {/* add props here */}
+      <GameHeader score={score} moves={moves} onReset={initializeGame} /> {/* add props here */}
+
+      {isGameComplete && <WinMessage moves={moves} />}
+
       <div className="cards-grid">
         {cards.map((card) => (
-          <Card card={card} onClick={handleCardClick}/>
+          <Card key={card.id} card={card} onClick={handleCardClick} />
         ))}
       </div>
       {/* <p>Hello React</p> */}
